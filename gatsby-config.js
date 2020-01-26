@@ -1,189 +1,51 @@
-/* eslint-disable @typescript-eslint/camelcase */
-const gatsbyRemarkPlugins = [
-  'gatsby-plugin-typegen',
-  {
-    resolve: 'gatsby-remark-smartypants',
-    options: {
-      dashes: 'oldschool'
-    }
-  },
-  {
-    resolve: 'gatsby-remark-prismjs',
-    options: {
-      classPrefix: 'language-',
-      inlineCodeMarker: {
-        tsx: 'tsx'
-      },
-      aliases: {}
-    }
-  },
-  {
-    resolve: 'gatsby-remark-images',
-    options: {
-      maxWidth: 1200
-    }
-  },
-  {
-    resolve: 'gatsby-remark-copy-linked-files',
-    options: {}
-  }
-]
+const website = require('./config/config')
+const pathPrefix = website.pathPrefix === '/' ? '' : website.pathPrefix
+
 
 module.exports = {
   siteMetadata: {
-    title: 'TypeScript Gatsby Starter',
-    author: 'Luís Rodrigues',
-    description: 'A Gatsby starter using TypeScript.',
-    siteUrl: 'https://goblindegook-gatsby-starter-typescript.netlify.com'
+    title: website.title,
+    siteUrl: website.url + pathPrefix, // For gatsby-plugin-sitemap
+    pathPrefix,
+    title: website.title,
+    titleAlt: website.titleAlt,
+		description: website.description,
+		banner: website.og_share,
+    siteLanguage: website.siteLanguage,
+    ogLanguage: website.ogLanguage,
+		og_share: website.og_share,
+    author: website.author,
+    twitter: website.twitter,
+    
   },
   plugins: [
-    'gatsby-plugin-typescript',
-    'gatsby-plugin-react-helmet',
-    'gatsby-plugin-emotion',
-    {
-      resolve: 'gatsby-plugin-typography',
-      options: {
-        pathToConfigModule: 'src/typography',
-        omitGoogleFont: true
-      }
-    },
-    'gatsby-plugin-catch-links',
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-typescript`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        name: 'content',
-        path: `${__dirname}/content`
-      }
+        name: `images`,
+        path: `${__dirname}/src/images`,
+      },
     },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
     {
-      resolve: 'gatsby-plugin-nprogress',
+      resolve: `gatsby-plugin-manifest`,
       options: {
-        color: '#ff5700',
-        showSpinner: false
-      }
+        name: `a4-data`,
+        short_name: `starter`,
+        start_url: `/`,
+        background_color: `#663399`,
+        theme_color: `#663399`,
+        display: `minimal-ui`,
+        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+      },
     },
-    {
-      resolve: 'gatsby-transformer-remark',
-      options: {
-        plugins: gatsbyRemarkPlugins
-      }
-    },
-    'gatsby-transformer-sharp',
-    'gatsby-plugin-sharp',
-    {
-      resolve: 'gatsby-plugin-mdx',
-      options: {
-        extensions: ['.md', '.mdx'],
-        gatsbyRemarkPlugins
-      }
-    },
-    {
-      resolve: 'gatsby-plugin-lunr',
-      options: {
-        languages: [
-          {
-            name: 'en',
-            filterNodes: node => !node.frontmatter || node.frontmatter.draft !== true,
-            customEntries: [
-              {
-                title: 'Another Page',
-                content: 'Welcome to page 2',
-                path: '/another-page/'
-              }
-            ]
-          }
-        ],
-        fields: [
-          { name: 'title', store: true, attributes: { boost: 20 } },
-          { name: 'path', store: true },
-          { name: 'content' },
-          { name: 'tags' }
-        ],
-        resolvers: {
-          Mdx: {
-            title: node => node.frontmatter.title,
-            path: node => node.frontmatter.path,
-            content: node => node.rawBody,
-            tags: node => node.frontmatter.tags
-          }
-        }
-      }
-    },
-    {
-      resolve: 'gatsby-plugin-feed',
-      options: {
-        /**
-         * no need to specify the other options, since they will be merged with this
-         */
-        feeds: [
-          {
-            title: 'Feed',
-            serialize: ({ query: { site, allMdx } }) => {
-              return allMdx.edges.map(({ node }) => {
-                return {
-                  ...node.frontmatter,
-                  description: node.excerpt,
-                  url: site.siteMetadata.siteUrl + node.frontmatter.path,
-                  guid: site.siteMetadata.siteUrl + node.frontmatter.path,
-                  custom_elements: [{ 'content:encoded': node.html }]
-                }
-              })
-            },
-            query: `
-              {
-                allMdx(
-                  limit: 1000,
-                  sort: { order: DESC, fields: [frontmatter___date] },
-                  filter: { frontmatter: { draft: { ne: true } } }
-                ) {
-                  edges {
-                    node {
-                      frontmatter {
-                        path
-                        title
-                        date
-                      }
-                      excerpt
-                      html
-                    }
-                  }
-                }
-              }
-            `,
-            output: 'rss.xml'
-          }
-        ]
-      }
-    },
-    {
-      resolve: 'gatsby-plugin-manifest',
-      options: {
-        name: 'gatsby-starter-typescript',
-        short_name: 'GatsbyTS',
-        start_url: '/',
-        background_color: '#f7f0eb',
-        theme_color: '#a2466c',
-        display: 'minimal-ui',
-        icons: [
-          {
-            // Everything in /static will be copied to an equivalent
-            // directory in /public during development and build, so
-            // assuming your favicons are in /static/favicon,
-            // you can reference them here
-            src: '/favicon/192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: '/favicon/512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    },
-    'gatsby-plugin-sitemap',
-    'gatsby-plugin-offline',
-    'gatsby-plugin-netlify'
-  ]
+    `gatsby-plugin-sass`,
+    `gatsby-plugin-material-ui`
+    // this (optional) plugin enables Progressive Web App + Offline functionality
+    // To learn more, visit: https://gatsby.dev/offline
+    // `gatsby-plugin-offline`,
+  ],
 }
