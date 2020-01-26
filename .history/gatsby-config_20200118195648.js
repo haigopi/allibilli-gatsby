@@ -10,8 +10,12 @@ module.exports = {
     title: website.title,
     titleAlt: website.titleAlt,
 		description: website.description,
+		banner: website.og_share,
+    siteLanguage: website.siteLanguage,
+    ogLanguage: website.ogLanguage,
+		og_share: website.og_share,
     author: website.author,
-    linkedin: website.linkedin,
+    twitter: website.twitter,
     
   },
   plugins: [
