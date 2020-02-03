@@ -1,6 +1,35 @@
 const website = require('./config/config')
 const pathPrefix = website.pathPrefix === '/' ? '' : website.pathPrefix
 
+const gatsbyRemarkPlugins = [
+  'gatsby-plugin-typegen',
+  {
+    resolve: 'gatsby-remark-smartypants',
+    options: {
+      dashes: 'oldschool'
+    }
+  },
+  {
+    resolve: 'gatsby-remark-prismjs',
+    options: {
+      classPrefix: 'language-',
+      inlineCodeMarker: {
+        tsx: 'tsx'
+      },
+      aliases: {}
+    }
+  },
+  {
+    resolve: 'gatsby-remark-images',
+    options: {
+      maxWidth: 1200
+    }
+  },
+  {
+    resolve: 'gatsby-remark-copy-linked-files',
+    options: {}
+  }
+]
 
 module.exports = {
   siteMetadata: {
@@ -39,7 +68,20 @@ module.exports = {
       },
     },
     `gatsby-plugin-sass`,
-    `gatsby-plugin-material-ui`
+    `gatsby-plugin-material-ui`,
+     {
+      resolve: 'gatsby-transformer-remark',
+      options: {
+        plugins: gatsbyRemarkPlugins
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-mdx',
+      options: {
+        extensions: ['.md', '.mdx'],
+        gatsbyRemarkPlugins
+      }
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
